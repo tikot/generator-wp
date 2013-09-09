@@ -13,10 +13,9 @@ Yet Another WordPress generator for Yeoman. With WordPress installation from the
 - WordPress in a sub-folder
 - themes & plugins folder in a root directory
 - Creates a database `CREATE DATABASE %name%`
-- Installs WordPress
+- Installs Wordpress
 
 ### To Do
-- <strike>Full WordPress install</strike>
 - Dandelion deployment for theme & plugin
 - Some other thing maybe
 
