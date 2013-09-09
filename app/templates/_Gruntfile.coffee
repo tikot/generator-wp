@@ -1,10 +1,10 @@
 'use strict'
 
 module.exports = (grunt) ->
-  
+
   # load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach grunt.loadNpmTasks
-  
+
   grunt.initConfig
     watch:
       options:
@@ -15,7 +15,7 @@ module.exports = (grunt) ->
       livereload:
         files: [
           'themes/<%= themeName %>/*.php',
-          'themes/<%= themeName %>/js/**/*.js'
+          'themes/<%= themeName %>/**/*.js'
           'themes/<%= themeName %>/img/*.{png,jpg,webp,svg}'
         ]
 
@@ -27,7 +27,7 @@ module.exports = (grunt) ->
           compress: true
           paths: ['node_modules/grunt-contrib-stylus/node_modules']
         files:
-          'themes/<%= themeName %>/main.css': ['themes/<%= themeName %>/stylus/style.styl']
+          'themes/<%= themeName %>/style.css': ['themes/<%= themeName %>/stylus/style.styl']
     php:
     	app:
         options:

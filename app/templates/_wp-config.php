@@ -58,10 +58,10 @@ define('NONCE_SALT',       'put your unique phrase here');
  *
  * These are required because wordpress is installed in a subdirectory.
  */
-define('WP_SITEURL', 'http://' . $_SERVER['SERVER_NAME'] . ':8000/wordpress');
-define('WP_HOME',    'http://' . $_SERVER['SERVER_NAME'] . ':8000');
-define('WP_CONTENT_DIR', __dir__ . '');
-define('WP_CONTENT_URL', 'http://' . $_SERVER['SERVER_NAME'] . ':8000');
+define( 'WP_SITEURL', 'http://' . $_SERVER['SERVER_NAME'] . ':8000/core' );
+define( 'WP_HOME',    'http://' . $_SERVER['SERVER_NAME'] . ':8000' );
+define( 'WP_CONTENT_DIR', __dir__ );
+define( 'WP_CONTENT_URL', 'http://' . $_SERVER['SERVER_NAME'] . ':8000' );
 
 /**
  * WordPress Database Table prefix.
@@ -88,7 +88,7 @@ define('WPLANG', '');
  * It is strongly recommended that plugin and theme developers use WP_DEBUG
  * in their development environments.
  */
-define('WP_DEBUG', false);
+define('WP_DEBUG', true);
 
 /* That's all, stop editing! Happy blogging. */
 

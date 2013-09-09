@@ -6,7 +6,10 @@ var yeoman = require('yeoman-generator');
 
 var fs = require('fs'),
   rimraf = require('rimraf'),
+  https = require('https'),
   exec   = require('child_process').exec,
+  version,
+  install,
   mysql = require('mysql');
 
 var WpGenerator = module.exports = function WpGenerator(args, options, config) {
@@ -21,10 +24,37 @@ var WpGenerator = module.exports = function WpGenerator(args, options, config) {
 
 util.inherits(WpGenerator, yeoman.generators.Base);
 
+// get the latest stable version of Wordpress
+WpGenerator.prototype.getVersion = function getVersion() {
+  var cb = this.async();
+
+  try {
+    https.get('https://api.github.com/repos/WordPress/WordPress/tags', function (res) {
+      var data = '';
+      res.on('data', function (chunk) {
+        data += chunk;
+      });
+      res.on('end', function () {
+          var obj = JSON.parse(data);
+          version = obj[0].name;
+          cb();
+        });
+    }).on('error', function (e) {
+        console.log('Got error: ' + e.message);
+        cb();
+      });
+  }
+  catch (e) {
+    console.log('Something went wrong !!!');
+    cb();
+  }
+
+};
+
 WpGenerator.prototype.defaultConfig = function getConfig() {
   var cb   = this.async();
 
-  this.latestVersion = '3.5.2';
+  this.latestVersion = version;
   this.defaultAuthorName = '';
   this.defaultAuthorURI = '';
   this.defaultTheme = 'https://github.com/automattic/_s/';
@@ -32,32 +62,55 @@ WpGenerator.prototype.defaultConfig = function getConfig() {
   cb();
 };
 
+WpGenerator.prototype.askOptions = function askOptions() {
+  var cb = this.async();
+
+  var prompts = [{
+      type: 'checkbox',
+      name: 'features',
+      message: 'What would you like to do?',
+      choices: [{
+        name: 'Create a database',
+        value: 'dbCreate',
+        checked: true
+      },
+      {
+        name: 'Install Wordpress (default user:admin password:1)',
+        value: 'wpInstall',
+        checked: true
+      },
+      ]
+    }];
+
+  this.prompt(prompts, function (answers) {
+    var features = answers.features;
+    this.dbCreate = features.indexOf('dbCreate') !== -1;
+    this.wpInstall = features.indexOf('wpInstall') !== -1;
+
+    cb();
+  }.bind(this));
+};
+
 WpGenerator.prototype.askFor = function askFor() {
   var cb = this.async();
 
-  // have Yeoman greet the user.
-  console.log(this.yeoman);
-  
   var prompts = [{
+      type: 'input',
       name: 'wordpressVersion',
       message: 'Which version of WordPress do you want?',
       default: this.latestVersion
     },
     {
+      type: 'input',
       name: 'themeName',
-      message: 'Name of the theme you want to use: ',
-      default: '_wp'
+      message: 'Name of your theme: ',
+      default: 'wpTheme'
     },
     {
+      type: 'input',
       name: 'themeBoilerplate',
       message: 'Starter theme (please provide a github link): ',
       default: this.defaultTheme
-    },
-    {
-      type: 'confirm',
-      name: 'createdb',
-      message: 'Would you like me to create datbase for you?',
-      default: true
     },
     // {
     //   name: 'dnHost',
@@ -79,14 +132,13 @@ WpGenerator.prototype.askFor = function askFor() {
       message: 'Give me a database password:',
       default: ''
     }];
-  
+
   this.prompt(prompts, function (props) {
     this.wordpressVersion = props.wordpressVersion;
 
     this.themeName = props.themeName;
     this.themeBoilerplate = props.themeBoilerplate;
 
-    this.createdb = props.createdb;
     // this.dnHost = props.dnHost;
     this.dbName = props.dbName;
 
@@ -97,43 +149,12 @@ WpGenerator.prototype.askFor = function askFor() {
   }.bind(this));
 };
 
-// get the latest stable version of Wordpress
-WpGenerator.prototype.getVersion = function getVersion() {
-  var cb = this.async(),
-    self = this;
-
-  this.log.writeln('');
-  this.log.writeln('Trying to get the latest stable version of Wordpress');
-
-  // try to get the latest version using the git tags
-  // http://wordpress.org/latest.tar.gz
-  try {
-    var version = exec('git ls-remote --tags git://github.com/WordPress/WordPress.git | tail -n 1', function (err, stdout, stderr) {
-      if (err) {
-        cb();
-      }
-      else {
-        var pattern = /\d\.\d[\.\d]*/ig,
-          match = pattern.exec(stdout);
-        if (match !== null) {
-          self.latestVersion = match[0];
-          self.log.writeln('Latest version: ' + self.latestVersion);
-        }
-      }
-      cb();
-    });
-  }
-  catch (e) {
-    cb();
-  }
-};
-
 // download the framework and unzip it in the project app/
 WpGenerator.prototype.createApp = function createApp() {
   var cb   = this.async();
-
+  this.wordpressVersion = 3.6;
   this.log.writeln('Downloading Wordpress ' + this.wordpressVersion);
-  this.tarball('https://github.com/WordPress/WordPress/tarball/' + this.wordpressVersion, 'wordpress', cb);
+  this.tarball('https://github.com/WordPress/WordPress/tarball/' + this.wordpressVersion, 'core', cb);
 };
 
 // remove the basic theme and create a new one
@@ -143,10 +164,10 @@ WpGenerator.prototype.createTheme = function createTheme() {
 
   this.log.writeln('First let\'s remove the built-in themes we will not use');
   // remove the existing themes
-  fs.readdir('wordpress/wp-content/themes', function (err, files) {
+  fs.readdir('core/wp-content/themes', function (err, files) {
     if (typeof files !== 'undefined' && files.length !== 0) {
       files.forEach(function (file) {
-        var pathFile = fs.realpathSync('wordpress/wp-content/themes/' + file),
+        var pathFile = fs.realpathSync('core/wp-content/themes/' + file),
           isDirectory = fs.statSync(pathFile).isDirectory();
 
         if (isDirectory) {
@@ -180,7 +201,7 @@ WpGenerator.prototype.createTheme = function createTheme() {
 WpGenerator.prototype.createDatbase = function createDatbase() {
   var cb = this.async();
 
-  if (this.createdb) {
+  if (this.dbCreate) {
     var connection = mysql.createConnection({
       host     : 'localhost',
       user     : this.dbUser,
@@ -192,13 +213,13 @@ WpGenerator.prototype.createDatbase = function createDatbase() {
     this.log.writeln('Runing SQL CREATE DATABASE ' + this.dbName);
     connection.query('CREATE DATABASE ' + this.dbName, function (err) {
       if (err) {
+        console.log('Database was not created');
         throw err;
       }
     });
     this.log.writeln('Ending connection');
     this.log.writeln('');
     connection.end();
-
     cb();
   }
   else {
@@ -220,4 +241,21 @@ WpGenerator.prototype.projectfiles = function projectfiles() {
   this.copy('_package.json', 'package.json');
   this.copy('editorconfig', '.editorconfig');
   this.copy('jshintrc', '.jshintrc');
+};
+
+WpGenerator.prototype.installCore = function installCore() {
+  var cb = this.async();
+
+  if (this.wpInstall) {
+    this.log.writeln('');
+    this.log.writeln('Installing WordPress');
+    install = exec('wp core install --path="core" --admin_user="admin" --admin_password="1" --admin_email=" " --title=' + this.themeName, function (error, stdout, stderr) {
+      if (error !== null) {
+        console.log('exec error: ' + error);
+      }
+      console.log(stdout);
+      console.log(stderr);
+      cb();
+    });
+  }
 };
