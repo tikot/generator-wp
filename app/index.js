@@ -152,7 +152,7 @@ WpGenerator.prototype.askFor = function askFor() {
 // download the framework and unzip it in the project app/
 WpGenerator.prototype.createApp = function createApp() {
   var cb   = this.async();
-  this.wordpressVersion = 3.6;
+
   this.log.writeln('Downloading Wordpress ' + this.wordpressVersion);
   this.tarball('https://github.com/WordPress/WordPress/tarball/' + this.wordpressVersion, 'core', cb);
 };
