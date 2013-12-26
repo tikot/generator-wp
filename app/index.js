@@ -60,7 +60,7 @@ WpGenerator.prototype.getVersion = function getVersion() {
 };
 
 WpGenerator.prototype.defaultConfig = function getConfig() {
-  var cb   = this.async();
+  var cb = this.async();
 
   this.latestVersion = version;
   this.defaultAuthorName = '';
@@ -162,7 +162,7 @@ WpGenerator.prototype.createApp = function createApp() {
   var cb   = this.async();
 
   this.log.writeln('Downloading Wordpress ' + this.wordpressVersion);
-  this.tarball('https://github.com/WordPress/WordPress/tarball/' + this.wordpressVersion, 'core', cb);
+  this.tarball('https://github.com/WordPress/WordPress/archive/' + this.wordpressVersion + '.tar.gz', 'core', cb);
 };
 
 // remove the basic theme and create a new one
@@ -194,10 +194,10 @@ WpGenerator.prototype.createTheme = function createTheme() {
     // if the user gave the repo url we add the end of the url. we assume he wants the master branch
     var lastChar = this.themeBoilerplate.substring(this.themeBoilerplate.length - 1);
     if (lastChar === '/') {
-      this.themeBoilerplate = this.themeBoilerplate + 'tarball/master';
+      this.themeBoilerplate = this.themeBoilerplate + 'archive/master.tar.gz';
     }
     else {
-      this.themeBoilerplate = this.themeBoilerplate + '/tarball/master';
+      this.themeBoilerplate = this.themeBoilerplate + '/archive/master.tar.gz';
     }
   }
 
@@ -236,6 +236,8 @@ WpGenerator.prototype.createDatbase = function createDatbase() {
 };
 
 WpGenerator.prototype.app = function app() {
+  this.pathName = '<%= wp.theme %>';
+
   this.mkdir('plugins');
   this.mkdir('themes');
   this.copy('index.php', 'index.php');
@@ -249,6 +251,7 @@ WpGenerator.prototype.projectfiles = function projectfiles() {
   this.copy('_package.json', 'package.json');
   this.copy('editorconfig', '.editorconfig');
   this.copy('jshintrc', '.jshintrc');
+  this.copy('_wp-cli.local.yml', 'wp-cli.local.yml');
 };
 
 WpGenerator.prototype.installCore = function installCore() {
@@ -257,7 +260,7 @@ WpGenerator.prototype.installCore = function installCore() {
   if (this.wpInstall) {
     this.log.writeln('');
     this.log.writeln('Installing WordPress');
-    install = exec('wp core install --path="core" --admin_user="admin" --admin_password="1" --admin_email=" " --title=' + this.themeName, function (error, stdout, stderr) {
+    install = exec('wp core install --admin_user="admin" --admin_password="1" --admin_email=" " --title=' + this.themeName, function (error, stdout, stderr) {
       if (error !== null) {
         console.log('exec error: ' + error);
       }

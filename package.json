@@ -1,6 +1,6 @@
 {
   "name": "generator-wp",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A WordPress generator for Yeoman",
   "keywords": [
     "yeoman-generator",
@@ -23,7 +23,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "yeoman-generator": "~0.13.1",
+    "yeoman-generator": "~0.14.2",
     "rimraf": "~2.2.2",
     "mysql": "~2.0.0-alpha8"
   },

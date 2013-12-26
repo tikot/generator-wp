@@ -6,17 +6,26 @@ module.exports = (grunt) ->
   require('matchdep').filterDev('grunt-*').forEach grunt.loadNpmTasks
 
   grunt.initConfig
+    pkg: grunt.file.readJSON('package.json')
+    wp:
+      theme: '<%= themeName %>'
+
     watch:
+      grunt:
+        files: ['Gruntfile.js']
       options:
         livereload: 5729,
-      stylus:
-        files: ['themes/<%= themeName %>/stylus/*.styl']
-        tasks: ['stylus']
+      # stylus:
+        # files: ['themes/<%= pathName %>/stylus/{,*/}*.styl']
+        # tasks: ['stylus']
+      sass:
+        files: 'themes/<%= pathName %>/scss/{,*/}*.scss'
+        tasks: ['sass']
       livereload:
         files: [
-          'themes/<%= themeName %>/*.php',
-          'themes/<%= themeName %>/**/*.js'
-          'themes/<%= themeName %>/img/*.{png,jpg,webp,svg}'
+          'themes/<%= pathName %>/{,*/}*.php',
+          'themes/<%= pathName %>/{,*/}*.js'
+          'themes/<%= pathName %>/img/*.{png,jpg,webp,svg}'
         ]
 
     stylus:
@@ -27,12 +36,22 @@ module.exports = (grunt) ->
           compress: true
           paths: ['node_modules/grunt-contrib-stylus/node_modules']
         files:
-          'themes/<%= themeName %>/style.css': ['themes/<%= themeName %>/stylus/style.styl']
+          'themes/<%= pathName %>/style.css': ['themes/<%= pathName %>/stylus/style.styl']
+
+    sass:
+      dist:
+        options:
+          outputStyle: 'compressed'
+        files:
+          'themes/<%= pathName %>/style.css': 'themes/<%= pathName %>/scss/style.scss'
+
     php:
-    	app:
+      app:
         options:
           base: "."
           keeplive: true
           open: true
 
-  grunt.registerTask 'default', ['stylus',  'watch',]
+  # grunt.registerTask('build', ['stylus']);
+  grunt.registerTask('build', ['sass']);
+  grunt.registerTask('default', ['build','watch']);

@@ -4,7 +4,7 @@ Yet Another WordPress generator for Yeoman. With WordPress installation from the
 
 ### Getting started
 - Make sure you have [yo](https://github.com/yeoman/yo) & [ grunt-cli](http://gruntjs.com/getting-started) installed:
-    `npm install -g yo grunt-cli`
+    `npm install -g yo`
 - Install the generator: `npm install -g generator-wp`
 - Run: `yo wp`
 - Then run: `grunt php`
