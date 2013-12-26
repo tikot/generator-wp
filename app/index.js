@@ -27,22 +27,30 @@ util.inherits(WpGenerator, yeoman.generators.Base);
 // get the latest stable version of Wordpress
 WpGenerator.prototype.getVersion = function getVersion() {
   var cb = this.async();
+  var options = {
+    host: 'api.github.com',
+    path: '/repos/WordPress/WordPress/tags',
+    headers: {'User-Agent': 'node'}
+  };
 
   try {
-    https.get('https://api.github.com/repos/WordPress/WordPress/tags', function (res) {
+    https.get(options, function (res) {
       var data = '';
+
       res.on('data', function (chunk) {
         data += chunk;
       });
+
       res.on('end', function () {
-          var obj = JSON.parse(data);
-          version = obj[0].name;
-          cb();
-        });
-    }).on('error', function (e) {
-        console.log('Got error: ' + e.message);
+        var obj = JSON.parse(data);
+        version = obj[0].name;
         cb();
       });
+
+    }).on('error', function (e) {
+      console.log('Got error: ' + e.message);
+      cb();
+    });
   }
   catch (e) {
     console.log('Something went wrong !!!');
