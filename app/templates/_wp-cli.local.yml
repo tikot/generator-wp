@@ -1,3 +1,5 @@
 path: core
 url: http://localhost:8000
+user: admin
 color: true
+debug: true

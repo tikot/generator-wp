@@ -1,23 +1,20 @@
 # generator-wp
 
-Yet Another WordPress generator for Yeoman. With WordPress installation from the terminal. Make sure you have `wp-cli` for the installation. This generator is opinionated workflow in fast development theme or plugins.
+WordPress generator that creates database and installed WordPress. Make sure you have `wp-cli` for the installation. This generator is opinionated workflow in for fast theme or plugins prototype.
 
 ### Getting started
-- Make sure you have [yo](https://github.com/yeoman/yo) & [ grunt-cli](http://gruntjs.com/getting-started) installed:
-    `npm install -g yo`
+- Make sure you have [yo](https://github.com/yeoman/yo) & [gulp](https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md) installed:
+    `npm install -g yo gulp` also `wp-cli`
 - Install the generator: `npm install -g generator-wp`
 - Run: `yo wp`
-- Then run: `grunt php`
+- Also a `gulp` command look into `gulpfile` for more info
 
-### Again Generator
+### What does it do
 - WordPress in a sub-folder
-- themes & plugins folder in a root directory
+- themes & plugins folder in a content directory
+- Sets up gulp with `browser-sync` for the theme
 - Creates a database `CREATE DATABASE %name%`
 - Installs Wordpress
-
-### To Do
-- Dandelion deployment for theme & plugin
-- Some other thing maybe
 
 ### License
 [MIT License](https://github.com/tikot/generator-wp/blob/master/LICENSE)

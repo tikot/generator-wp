@@ -60,8 +60,8 @@ define('NONCE_SALT',       'put your unique phrase here');
  */
 define( 'WP_SITEURL', 'http://' . $_SERVER['SERVER_NAME'] . ':8000/core' );
 define( 'WP_HOME',    'http://' . $_SERVER['SERVER_NAME'] . ':8000' );
-define( 'WP_CONTENT_DIR', __dir__ );
-define( 'WP_CONTENT_URL', 'http://' . $_SERVER['SERVER_NAME'] . ':8000' );
+define( 'WP_CONTENT_DIR', dirname(__FILE__) . '/content' );
+define( 'WP_CONTENT_URL', 'http://' . $_SERVER['SERVER_NAME'] . ':8000/content' );
 
 /**
  * WordPress Database Table prefix.
