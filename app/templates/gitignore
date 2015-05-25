@@ -1,0 +1,37 @@
+# Ignore dev files
+bower_components/
+node_modules/
+
+# Ignore automatically generated files
+*.log
+.sass-cache
+
+# Ignore config
+wp-config.php
+
+# Ignore Wordpress core files
+cores/
+
+# WordPress defaults
+*.log
+.htaccess
+sitemap.xml
+sitemap.xml.gz
+config.php
+content/advanced-cache.php
+content/backup-db/
+content/backups/
+content/blogs.dir/
+content/cache/
+content/upgrade/
+content/uploads/
+content/wp-cache-config.php
+content/plugins/hello.php
+
+# Operating system files
+.Spotlight-V100
+.Trashes
+.DS_Store
+.DS_Store?
+ehthumbs.db
+Thumbs.db
