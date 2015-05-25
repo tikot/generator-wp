@@ -1,6 +1,6 @@
 # generator-wp
 
-WordPress generator that creates database and installed WordPress. Make sure you have `wp-cli` for the installation. This generator is opinionated workflow in for fast theme or plugins prototype.
+WordPress generator that creates database and installs WordPress. Make sure you have `wp-cli` for the installation. This generator is opinionated workflow in for fast theme or plugins prototype.
 
 ### Getting started
 - Make sure you have [yo](https://github.com/yeoman/yo) & [gulp](https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md) installed:
